@@ -6,6 +6,7 @@
       "dom.iterable",
       "esnext"
     ],
+    "baseUrl": "./src",   // 绝对路径回去 src 下寻找
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
