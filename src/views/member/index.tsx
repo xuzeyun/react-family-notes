@@ -3,12 +3,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 // import { Toast, Grid, Dialog, FloatingBubble } from "antd-mobile";
 
-import { Image, List, FloatingBubble } from 'antd-mobile'
-import { MessageFill } from 'antd-mobile-icons'
+import { Image, List, FloatingBubble, PullToRefresh } from 'antd-mobile'
+import { AddOutline } from 'antd-mobile-icons'
 // import "styles/form.scss";
 
 // service
 import AddDialog from "./add-dialog";
+import { sleep } from 'antd-mobile/es/utils/sleep'
 // import "./index.scss";
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -36,37 +37,6 @@ export default function MemberList() {
   // 当前行信息
   const [curRow, setCurRow] = useState({});
   const [type, setType] = useState(1);
-
-  const users = [
-    {
-      id: '1',
-      avatar:
-        'https://images.unsplash.com/photo-1548532928-b34e3be62fc6?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ',
-      name: 'Novalee Spicer',
-      description: 'Deserunt dolor ea eaque eos',
-    },
-    {
-      id: '2',
-      avatar:
-        'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9',
-      name: 'Sara Koivisto',
-      description: 'Animi eius expedita, explicabo',
-    },
-    {
-      id: '3',
-      avatar:
-        'https://images.unsplash.com/photo-1542624937-8d1e9f53c1b9?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ',
-      name: 'Marco Gregg',
-      description: 'Ab animi cumque eveniet ex harum nam odio omnis',
-    },
-    {
-      id: '4',
-      avatar:
-        'https://images.unsplash.com/photo-1546967191-fdfb13ed6b1e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ',
-      name: 'Edith Koenig',
-      description: 'Commodi earum exercitationem id numquam vitae',
-    },
-  ]
 
   useEffect(() => {
     // 请求列表
@@ -189,39 +159,41 @@ export default function MemberList() {
   );
 
   return (
-    <div>
-      <List header='用户列表'>
-        {list.map((user: Member) => (
-          // key={user.id}
-          <List.Item
-            prefix={
-              <Image
-                src={''}
-                // src={user.avatar}
-                style={{ borderRadius: 20 }}
-                fit='cover'
-                width={40}
-                height={40}
-              />
-            }
-            description={user.intro}
-            // onClick={() => {viewHandle(member);}}
-          >
-            {user.name}
-          </List.Item>
-        ))}
-      </List>
-
-      <div
-        style={{
-          textAlign: 'center',
-          padding: '50vh 32px 0',
+    <div className="body-wrap">
+      
+      <PullToRefresh
+        onRefresh={async () => {
+          await sleep(1000)
+          // setData([...getNextData(), ...data])
+          getList();
         }}
-      >
+        >
+        {/* <List header='用户列表'> */}
+        <List>
+          {list.map((user: Member) => (
+            // key={user.id}
+            <List.Item
+              prefix={
+                <Image
+                  src={''}
+                  // src={user.avatar}
+                  style={{ borderRadius: 20 }}
+                  fit='cover'
+                  width={40}
+                  height={40}
+                />
+              }
+              description={user.intro}
+              // onClick={() => {viewHandle(member);}}
+            >
+              {user.name}
+            </List.Item>
+          ))}
+        </List>
         {/* <DemoDescription>尝试拖拽和点击一下气泡吧</DemoDescription> */}
         <FloatingBubble
           style={{
-            '--initial-position-bottom': '24px',
+            '--initial-position-bottom': '100px',
             '--initial-position-right': '24px',
             '--edge-distance': '24px',
           }}
@@ -230,9 +202,10 @@ export default function MemberList() {
             setType(1);
           }}
         >
-          <MessageFill fontSize={32} />
+          <AddOutline fontSize={32} />
         </FloatingBubble>
-      </div>
+      </PullToRefresh>
+
       {/* 弹窗 */}
       { addDialog }
 
