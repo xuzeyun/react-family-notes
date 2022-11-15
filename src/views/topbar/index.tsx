@@ -2,14 +2,13 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { NavBar, Space, Toast } from 'antd-mobile'
 import logo from "assets/images/logo_2.svg";
+import { Routes, Route, Link, useParams, useNavigate, useLocation } from "react-router-dom";
+
 
 export const TopBar = () => {
-
+  const location = useLocation();
   const back = () =>{
-    Toast.show({
-      content: '点击了返回区域',
-      duration: 1000,
-    })
+    window.history.back()
   }
     
   return (
@@ -19,8 +18,7 @@ export const TopBar = () => {
     //   </h1>
     // </div>
     <NavBar onBack={back}>
-      家族成员
-      {/* <img src={logo} alt="24G Logo"></img> */}
+      <span>{location.state && location.state.topTitle ? location.state.topTitle: '府云笺'}</span>
     </NavBar>
   );
 };

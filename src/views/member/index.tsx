@@ -1,15 +1,19 @@
 // main
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+// import React, { FC, useRef } from 'react'
 import axios from "axios";
 // import { Toast, Grid, Dialog, FloatingBubble } from "antd-mobile";
 
-import { Image, List, FloatingBubble, PullToRefresh } from 'antd-mobile'
+import { Image, List, FloatingBubble, PullToRefresh, SwipeAction, Toast, Dialog } from 'antd-mobile'
+import { Routes, Route, Link, useParams, useNavigate } from "react-router-dom";
 import { AddOutline } from 'antd-mobile-icons'
 // import "styles/form.scss";
 
 // service
 import AddDialog from "./add-dialog";
 import { sleep } from 'antd-mobile/es/utils/sleep'
+
+import { Action, SwipeActionRef } from 'antd-mobile/es/components/swipe-action'
 // import "./index.scss";
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -30,6 +34,7 @@ interface Member {
 }
 
 export default function MemberList() {
+  const navigate = useNavigate();
   // 列表信息
   const [list, setList] = useState([]);
   // 弹窗显示隐藏
@@ -46,7 +51,7 @@ export default function MemberList() {
   // 关闭弹窗
   const closeModel = () => {
     setIsModalVisible(false);
-    setCurRow({});
+    // setCurRow({});
   };
 
   // 请求列表
@@ -69,84 +74,45 @@ export default function MemberList() {
     setIsModalVisible(true);
   };
 
-  // 详情
+  // 详情（跳转详情页）
   const viewHandle = (row: Member) => {
     // setType(3)
     // viewHandle(row);
     // setIsModalVisible(true);
+    console.log(row, '1111111111111');
+    
+    navigate('/member/detail', {
+      state: {
+        topTitle: '成员详情',
+        ...row
+      }
+    })
   };
 
   // 删除
-  // const deleteHandel = async (id: string) => {
-  //   const result = await Dialog.confirm({
-  //     content: "确认要删除此条数据？",
-  //   });
-  //   if (result) {
-  //     axios
-  //       .delete(`${apiUrl}/member/delete/` + id)
-  //       .then((res) => res.data)
-  //       .then((res) => {
-  //         if (res.success) {
-  //           Toast.show({ icon: "success", content: res.msg });
-  //           getList();
-  //         } else {
-  //           Toast.show({ icon: "fail", content: res.msg });
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-  //   } else {
-  //     Toast.show({ content: "已取消", position: "bottom" });
-  //   }
-  // };
-
-  // li demo
-  // const listItems = list.map((member: any, index: number) => (
-  //   <li
-  //     key={index}
-  //     onClick={() => {
-  //       viewHandle(member);
-  //     }}
-  //   >
-  //     <div className="border-box">
-  //       <div className="border-box2 clearfix">
-  //         <h3>{member.name}</h3>
-  //         <div className="tool-box">
-  //           <i
-  //             className="fas fa-pen primary"
-  //             onClick={() => editHandel(member)}
-  //           ></i>
-  //           <i
-  //             className="fas fa-trash error"
-  //             onClick={() => deleteHandel(member.id)}
-  //           ></i>
-  //         </div>
-  //         <p>
-  //           <span>别名：{member.nickname}</span>
-  //           <br />
-  //           <span>性别：{member.sex === 1 ? "男" : "女"}</span>
-  //           <br />
-  //           <span>生辰：{member.birthday}</span>
-  //           <br />
-  //           <span>生死：{member.life === 1 ? "生" : "死"}</span>
-  //           <br />
-  //           <span>生肖：{member.zodiac}</span>
-  //           <br />
-  //           <span>星座：{member.constellation}</span>
-  //           <br />
-  //           <span>行当：{member.occupation}</span>
-  //           <br />
-  //           <span>通讯：{member.contact}</span>
-  //           <br />
-  //           <span>志趣：{member.interest}</span>
-  //           <br />
-  //           <span>简介：{member.intro}</span>
-  //         </p>
-  //       </div>
-  //     </div>
-  //   </li>
-  // ));
+  const deleteHandel = async (id: any) => {
+    const result = await Dialog.confirm({
+      content: "确认要删除此条数据？",
+    });
+    if (result) {
+      axios
+        .delete(`${apiUrl}/member/delete/` + id)
+        .then((res) => res.data)
+        .then((res) => {
+          if (res.success) {
+            Toast.show({ icon: "success", content: res.msg });
+            getList();
+          } else {
+            Toast.show({ icon: "fail", content: res.msg });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      Toast.show({ content: "已取消", position: "bottom" });
+    }
+  };
 
   const addDialog = (
     <AddDialog
@@ -158,9 +124,11 @@ export default function MemberList() {
     ></AddDialog>
   );
 
+ 
+  const ref = useRef<SwipeActionRef>(null)
+
   return (
     <div className="body-wrap">
-      
       <PullToRefresh
         onRefresh={async () => {
           await sleep(1000)
@@ -170,24 +138,47 @@ export default function MemberList() {
         >
         {/* <List header='用户列表'> */}
         <List>
-          {list.map((user: Member) => (
-            // key={user.id}
-            <List.Item
-              prefix={
-                <Image
-                  src={''}
-                  // src={user.avatar}
-                  style={{ borderRadius: 20 }}
-                  fit='cover'
-                  width={40}
-                  height={40}
-                />
-              }
-              description={user.intro}
-              // onClick={() => {viewHandle(member);}}
+          {list.map((user: Member, index: number) => (
+            <SwipeAction
+              ref={ref}
+              key={index}
+              rightActions={[
+                {
+                  key: 'edit',
+                  text: <i className="fas fa-edit"></i>,
+                  color: 'primary',
+                  onClick: async () => {
+                    editHandel(user)
+                  },
+                },
+                {
+                  key: 'delete',
+                  text: <i className="fas fa-trash"></i>,
+                  color: 'danger',
+                  onClick: async () => {
+                    deleteHandel(user.id)
+                  },
+                },
+              ]}
             >
-              {user.name}
-            </List.Item>
+              <List.Item
+                prefix={
+                  <Image
+                    src={''}
+                    // src={user.avatar}
+                    style={{ borderRadius: 20 }}
+                    fit='cover'
+                    width={40}
+                    height={40}
+                  />
+                }
+                description={user.intro ? user.intro : '暂无简介'}
+                onClick={() => {viewHandle(user);}}
+              >
+                <span className={user.sex && user.sex == 1 ? 'icon-man' : 'icon-women'}>{user.name}{user.sex && user.sex == 1 ? <i className="fas fa-mars"></i> : <i className="fas fa-venus"></i>}</span>
+                
+              </List.Item>
+            </SwipeAction>
           ))}
         </List>
         {/* <DemoDescription>尝试拖拽和点击一下气泡吧</DemoDescription> */}
@@ -208,44 +199,6 @@ export default function MemberList() {
 
       {/* 弹窗 */}
       { addDialog }
-
-
-
-
-      {/* 新增 */}
-      {/* <div className="g-bottom top-btns">
-        <i
-          className="fas fa-user-plus"
-          onClick={() => {
-            setIsModalVisible(true);
-            setType(1);
-          }}>
-        </i>
-      </div> */}
-      {/* <div className="g-wrap clearfix">
-        <div className="card-list">
-          <ul>{listItems}</ul>
-        </div>
-      </div> */}
-
-      {/* 分页 */}
-      <div></div>
-      
-
-      {/* <FloatingBubble
-        style={{
-          "--initial-position-bottom": "1.5rem",
-          "--initial-position-right": "0.1rem",
-        }}
-        onClick={() => {
-          setIsModalVisible(true);
-          setType(1);
-        }}
-      >
-        <i className="fas fa-user-plus"></i>
-      </FloatingBubble> */}
     </div>
-
-    
   );
 }

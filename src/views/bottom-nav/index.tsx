@@ -1,43 +1,53 @@
 import * as React from "react";
 import { Badge, TabBar } from "antd-mobile";
 import { Routes, Route, Link, useParams, useNavigate } from "react-router-dom";
-import "views/styles/index.scss";
+import { UserOutline, TeamOutline, ReceivePaymentOutline, FillinOutline, ContentOutline } from 'antd-mobile-icons'
+import "styles/index.scss";
 
 export default function BottomNav() {
   let navigate = useNavigate();
   let params = useParams();
   const tabs = [
     {
-      key: "member",
+      key: "/member",
       title: "家族成员",
-      icon: <i className="fas fa-users bottom-icon"></i>,
+      icon: <TeamOutline />,
     },
     {
-      key: "money",
-      title: "账房",
-      icon: <i className="fas fa-piggy-bank bottom-icon"></i>,
+      key: "/notes",
+      title: "记事本",
+      icon: <FillinOutline />,
     },
     {
-      key: "note",
-      title: "府事记",
-      icon: <i className="fas fa-book bottom-icon"></i>,
+      key: "/money",
+      title: "账本",
+      icon: <ReceivePaymentOutline />,
     },
     {
-      key: "books",
-      title: "书房",
-      icon: <i className="fab fa-leanpub bottom-icon"></i>,
+      key: "/books",
+      title: "公告墙",
+      icon: <ContentOutline />,
     },
-    // 简介 家规 家训
     {
-      key: "person",
+      key: "/personalCenter",
       title: "个人中心",
-      icon: <i className="fas fa-id-card-alt bottom-icon"></i>,
+      icon: <UserOutline />,
     },
   ];
   // icon: (active: boolean) => active ? <i className="fas fa-book"></i> : <i className="fas fa-book"></i>,
 
-  const setActiveKey = (e: any) => {
-    navigate(`/${e}`);
+  const setActiveKey = (url: any) => {    
+    let title = '';
+    tabs.forEach(item => {
+      if (item.key === url) {
+        title = item.title;
+      }
+    })
+    navigate(url, {
+      state: {
+        topTitle: title,
+      }
+    });
   };
 
   return (
@@ -48,9 +58,9 @@ export default function BottomNav() {
           <TabBar.Item key={item.key} icon={item.icon} title={item.title} />
         ))}
       </TabBar> */}
-      <TabBar>
+      <TabBar onChange={setActiveKey}>
         {tabs.map(item => (
-          <TabBar.Item key={item.key} icon={item.icon} />
+          <TabBar.Item key={item.key} icon={item.icon} title={item.title}/>
         ))}
       </TabBar>
     </div>

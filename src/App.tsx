@@ -8,25 +8,24 @@ import {
   useLocation,
 } from "react-router-dom";
 // import logo from './logo.svg';
-import "views/styles/index.scss";
+import "styles/index.scss";
 import {} from "./views/member/index"
 import MemberList from "./views/member/index";
+import MemberDetail from "./views/member/detail";
+
 import BottomNav from "views/bottom-nav/index";
-// import Login from "views/login/index";
+import Login from "views/login/index";
 // import { Money } from "views/money/index";
 // import { Note } from "views/note/index";
 import { TopBar } from "views/topbar/index";
-// import { Person } from "views/person/index";
+import { PersonalCenter } from "views/personal-center/index";
 import UserContext from "./context/UserContext";
 
 function App() {
   let curUrl = useLocation();
 
-  // const topBar = curUrl.pathname !== "/login" ? <TopBar></TopBar> : null;
-  const topBar = <TopBar></TopBar>;
-  // const bottomNav =
-  //   curUrl.pathname !== "/login" ? <BottomNav></BottomNav> : null;
-  const bottomNav = <BottomNav></BottomNav>;
+  const topBar = curUrl.pathname !== "/login" ? <TopBar></TopBar> : null;
+  const bottomNav = curUrl.pathname !== "/login" ? <BottomNav></BottomNav> : null;
 
   const [userInfo, setUserInfo] = useState({
     id: "",
@@ -47,11 +46,12 @@ function App() {
         {/* 内容区域 */}
         <div className="app-wrap">
           <Routes>
-            {/* <Route path="/login" element={<Login />} /> */}
+            <Route path="/login" element={<Login />} />
             <Route path="/member" element={<MemberList />} />
+            <Route path="/member/detail" element={<MemberDetail />} />
             {/* <Route path="/money" element={<Money />} />
-            <Route path="/note" element={<Note />} />
-            <Route path="/person" element={<Person />} /> */}
+            <Route path="/note" element={<Note />} /> */}
+            <Route path="/personalCenter" element={<PersonalCenter />} />
           </Routes>
         </div>
         {/* 底栏 */}
