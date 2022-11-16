@@ -37,74 +37,10 @@ export default function Login() {
   const [checked, setChecked] = React.useState(true);
 
   // 提交
-  const submitHandle = (e: any) => {
-    e.preventDefault();
-    console.log(loginState, "登录状态");
-    if (loginState) {
-      // 登录
-      let md5 = Md5.hashStr(user.password);
-      let data = {
-        username: user.username,
-        password: md5,
-      };
-      console.log(data, "data");
-      axios
-        .post(`${apiUrl}/user/login`, data)
-        .then((res) => res.data)
-        .then((res) => {
-          if (res.success) {
-            Toast.show({ icon: "success", content: res.msg });
-            // 登录成功后跳转路由，存储登录信息
-            // data: {
-            //   id: "5f35461d98ac4506b8c01b4ad280d817"
-            //   nickname: "123"
-            //   token: "ffe1061786aa46cfaa07046f41d974f7"
-            //   username: "test"
-            // }
-            // msg: "登录成功"
-            // success: true
-            // const ThemeContext = React.createContext('light');
-            // setUserInfo(res.data);
-            // JSON.stringify(userInfo);
-            setUserInfo({ ...res.data });
-            console.log(userInfo, "userInfo");
-            // 页面跳转
-            navigate("/personalCenter");
-          } else {
-            Toast.show({ icon: "fail", content: res.msg });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      // 注册
-      let md5 = Md5.hashStr(user.password);
-      let data = {
-        username: user.username,
-        nickname: user.nickname,
-        password: md5,
-      };
-      axios
-        .post(`${apiUrl}/user/save`, data)
-        .then((res) => res.data)
-        .then((res) => {
-          if (res.success) {
-            Toast.show({ icon: "success", content: res.msg });
-            // 注册成功
-          } else {
-            Toast.show({ icon: "fail", content: res.msg });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
   const [isSubmit, setIsSubmit] = useState(true);
 
   const onFinish = (values: any) => {
-    if(!isSubmit) return;
+    if (!isSubmit) return;
     setIsSubmit(false);
 
     if (loginState) {
@@ -121,6 +57,7 @@ export default function Login() {
         .then((res) => {
           if (res.success) {
             Toast.show({ icon: "success", content: res.msg });
+            console.log(res.data, "res.data");
             setUserInfo({ ...res.data });
             console.log(userInfo, "userInfo");
             // 页面跳转
@@ -135,7 +72,7 @@ export default function Login() {
           setIsSubmit(true);
         });
     } else {
-      if(values.password != values.repassword){
+      if (values.password != values.repassword) {
         Toast.show({ icon: "fail", content: "两次密码输入不一致" });
         return
       }
@@ -163,7 +100,6 @@ export default function Login() {
           setIsSubmit(true);
         });
     }
-    
   }
 
   // 登陆注册切换
@@ -208,13 +144,13 @@ export default function Login() {
             >
               <Input onChange={console.log} placeholder='请输入' />
             </Form.Item>
-            ) : null}
+          ) : null}
           <Form.Item
             name='password'
             label={<span><i className="fas fa-lock"></i>密码</span>}
             rules={[{ required: true, message: '请输入' }]}
           >
-            <Input onChange={console.log} placeholder='请输入' />
+            <Input type="password" onChange={console.log} placeholder='请输入' />
           </Form.Item>
           {!loginState ? (
             <Form.Item
@@ -222,7 +158,7 @@ export default function Login() {
               label={<span><i className="fas fa-lock"></i>确认密码</span>}
               rules={[{ required: true, message: '请输入' }]}
             >
-              <Input onChange={console.log} placeholder='请输入' />
+              <Input type="password" onChange={console.log} placeholder='请输入' />
             </Form.Item>
           ) : null}
         </Form>

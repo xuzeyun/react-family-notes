@@ -203,22 +203,28 @@ body {
 }
 .adm-grid {
   .adm-grid-item {
-    padding: 6px 0;
     font-size: 14px;
   }
 }
 .person-page {
+  .person-card-main{
+    .adm-grid-item {
+      padding: 6px 0;
+      font-size: 16px;
+    }
+  }
   .num-card{
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     .adm-grid-item{
       padding: 0;
     }
     .card {
       background: #fff !important;
       border-radius: 8px;
-      padding: 10px 20px;
+      padding: 12px 20px;
+      text-align: center;
       .num{
-        font-size: 24px;
+        font-size: 36px;
         font-weight: bold;
         color: #016ee7;
       }

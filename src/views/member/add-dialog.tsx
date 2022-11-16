@@ -1,11 +1,12 @@
 // main
-import React, { useState, useEffect, RefObject } from "react";
+import React, { useState, useEffect, RefObject, useContext } from "react";
 import axios from "axios";
 // import "styles/form.scss";
 import { Toast, Grid, Popup, Form, Button, TextArea, Switch, Input, Selector, Picker, Space, DatePicker } from "antd-mobile";
 import { FormInstance } from 'antd-mobile/es/components/form'
 import dayjs from 'dayjs'
 import type { DatePickerRef } from 'antd-mobile/es/components/date-picker'
+import UserContext from "context/UserContext";
 
 
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -17,6 +18,8 @@ export default function FullScreenDialog(props: {
   curRow: any;
   isModalVisible: boolean;
 }) {
+  // @ts-ignore
+  const { userInfo, setUserInfo } = useContext(UserContext);
   const formRef = React.createRef<FormInstance>()
   const sexOptions = [{ label: '男', value: '1' }, { label: '女', value: '0' }];
   const lifeOptions = [{ label: '健在', value: '1' }, { label: '寿终', value: '0' }];
@@ -34,6 +37,7 @@ export default function FullScreenDialog(props: {
     let data = {
       ...values,
       id: props.curRow.id,
+      usrId: userInfo.id,
       birthday: dayjs(values.birthday).format('YYYY-MM-DD'),
       sex: values.sex ? values.sex[0] : '',
       life: values.life ? values.life[0] : '',
@@ -59,10 +63,6 @@ export default function FullScreenDialog(props: {
         console.log(err);
         setIsSubmit(true);
       });
-
-    console.log(data, 'ssss');
-
-
   }
 
   useEffect(() => {
